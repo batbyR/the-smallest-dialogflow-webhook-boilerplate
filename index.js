@@ -31,6 +31,10 @@ app.get('/health', (req, res) => {
   res.send('ok prod')
 });
 
+app.post('/health', (req, res) => {
+  res.send('ok prod')
+});
+
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 8000;
