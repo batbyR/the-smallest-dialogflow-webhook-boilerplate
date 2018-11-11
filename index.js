@@ -3,6 +3,7 @@
 let express = require("express");
 let app = express();
 let bodyParser = require("body-parser");
+const axios = require("axios");
 
 // These two following lines ensures that every incomming request is parsed to json automatically
 app.use(bodyParser.urlencoded({ extended: "true" }));
@@ -35,8 +36,10 @@ app.get("/health", (req, res) => {
 });
 
 app.post("/health", (req, res) => {
-  const response = { fulfillmentText: "OK GO" };
-  res.send(JSON.stringify(response));
+  retrieveLessons(13, 11, 2018).then(lessons => {
+    const response = { fulfillmentText: JSON.stringify(lessons) };
+    res.send(response);
+  });
 });
 
 let port = process.env.PORT;
@@ -45,3 +48,20 @@ if (port == null || port == "") {
 }
 app.listen(port);
 console.log("info", `server listening on port ${port}`);
+
+const retrieveLessons = (day, month, year) =>
+  axios
+    .get(
+      `https://www.iiens.net/etudiants/edt/json_services/events.php?${year}/${month}/${day}-1-/`
+    )
+    .then(response => {
+      const eventgroups = response.data.eventgroups;
+      const lessons = [];
+      for (let key in eventgroups) {
+        lessons.push(eventgroups[key].events.e1.title);
+      }
+      return lessons;
+    })
+    .catch(error => {
+      console.log(error);
+    });
