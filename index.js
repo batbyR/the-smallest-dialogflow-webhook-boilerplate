@@ -43,7 +43,7 @@ app.post("/health", (req, res) => {
       date.getMonth() + 1,
       date.getFullYear()
     ).then(lessons => {
-      const response = { fulfillmentText: JSON.stringify(lessons) };
+      const response = { fulfillmentText: lessons };
       res.send(response);
     });
   } else {
@@ -69,11 +69,37 @@ const retrieveLessons = (day, month, year) =>
       const lessons = [];
       for (let key in eventgroups) {
         if (eventgroups[key].events.e1) {
-          lessons.push(eventgroups[key].events.e1.title);
+          const e = eventgroups[key].events.e1;
+
+          lessons.push(formatLessonTitle(e.title, e.start, e.duration));
         }
       }
-      return lessons;
+      return lessons.join("\n");
     })
     .catch(error => {
       console.log(error);
     });
+
+const formatLessonTitle = (title, start, duration) =>
+  `De ${retrieveTimeFromQuarters(start)} à ${retrieveTimeFromQuarters(
+    start + duration
+  )}, tu as ${title}`;
+
+const retrieveTimeFromQuarters = quarter => {
+  const hours = Math.trunc(quarter / 4);
+  let minutes;
+  switch (quarter % 4) {
+    case 1:
+      minutes = "15";
+      break;
+    case 2:
+      minutes = "30";
+      break;
+    case 3:
+      minutes = "45";
+      break;
+    default:
+      minutes = "00";
+  }
+  return `${hours}H${minutes}`;
+};
