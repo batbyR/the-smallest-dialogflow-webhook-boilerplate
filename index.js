@@ -62,7 +62,7 @@ console.log("info", `server listening on port ${port}`);
 const retrieveLessons = (day, month, year) =>
   axios
     .get(
-      `https://www.iiens.net/etudiants/edt/json_services/events.php?${year}/${month}/${day}-1-/`
+      `https://www.iiens.net/etudiants/edt/json_services/events.php?${year}/${month}/${day}-1-`
     )
     .then(response => {
       const eventgroups = response.data.eventgroups;
