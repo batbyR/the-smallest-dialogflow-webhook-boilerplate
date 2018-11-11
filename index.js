@@ -68,7 +68,9 @@ const retrieveLessons = (day, month, year) =>
       const eventgroups = response.data.eventgroups;
       const lessons = [];
       for (let key in eventgroups) {
-        lessons.push(eventgroups[key].events.e1.title);
+        if (eventgroups[key].events.e1) {
+          lessons.push(eventgroups[key].events.e1.title);
+        }
       }
       return lessons;
     })
