@@ -36,10 +36,20 @@ app.get("/health", (req, res) => {
 });
 
 app.post("/health", (req, res) => {
-  retrieveLessons(13, 11, 2018).then(lessons => {
-    const response = { fulfillmentText: JSON.stringify(lessons) };
+  if (req.body.queryResult.parameters.date) {
+    const date = new Date(req.body.queryResult.parameters.date);
+    retrieveLessons(
+      date.getDate(),
+      date.getMonth() + 1,
+      date.getFullYear()
+    ).then(lessons => {
+      const response = { fulfillmentText: JSON.stringify(lessons) };
+      res.send(response);
+    });
+  } else {
+    const response = { fulfillmentText: "Je n'ai pas compris la date" };
     res.send(response);
-  });
+  }
 });
 
 let port = process.env.PORT;
